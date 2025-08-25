@@ -35,8 +35,8 @@ log_error() {
 APP_NAME="football-app"
 APP_USER="football"
 APP_DIR="/opt/$APP_NAME"
-DOMAIN_NAME=""  # À remplir : exemple.com
-EMAIL=""        # À remplir : admin@exemple.com
+DOMAIN_NAME="licencesftf.com"  # Votre domaine
+EMAIL="alouiwiss@gmail.com"        # Votre email pour Let's Encrypt
 DB_NAME="football_db"
 DB_USER="football_user"
 DB_PASSWORD=""  # Sera généré automatiquement
