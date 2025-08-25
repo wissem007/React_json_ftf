@@ -1,0 +1,9 @@
+
+# Démarrer en mode développement
+docker-compose up -d
+
+# Voir les logs
+docker-compose logs -f
+
+# Arrêter
+docker-compose down

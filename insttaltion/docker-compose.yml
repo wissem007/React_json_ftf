@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: football-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-football_db}
+      POSTGRES_USER: ${DB_USER:-football_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-football_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - football-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-football_user} -d ${DB_NAME:-football_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: football-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-football_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-football_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-football_password}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - football-network
+    volumes:
+      - ./logs/backend:/app/logs
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: football-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - football-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  football-network:
+    driver: bridge

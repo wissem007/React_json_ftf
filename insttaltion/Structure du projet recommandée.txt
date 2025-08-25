@@ -1,0 +1,27 @@
+football-app/
+├── backend/
+│   ├── src/
+│   ├── pom.xml (ou build.gradle)
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── .env
+├── nginx/
+│   ├── nginx.conf
+│   └── ssl/ (certificats)
+├── scripts/
+│   ├── deploy.sh
+│   ├── backup.sh
+│   └── init-db.sql
+└── README.md
+
+
+mkdir football-app && cd football-app
+mkdir -p backend frontend nginx scripts backups logs/backend
+
+chmod +x scripts/*.sh
+./scripts/deploy.sh
